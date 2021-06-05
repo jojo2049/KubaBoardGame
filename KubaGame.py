@@ -76,12 +76,30 @@ class GameBoard:
         """
         pass
 
+    def create_board(self):
+        board_squares = {(1,1): 'X'}
+
     def get_board(self):
         """
         Methods to get a visual of the board
         :return: a visual print of the board in console
         """
-        pass
+        print('--+-+-+-+-+-+--')
+        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('--+-+-+-+-+-+--')
+        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('--+-+-+-+-+-+--')
+        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('--+-+-+-+-+-+--')
+        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('--+-+-+-+-+-+--')
+        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('--+-+-+-+-+-+--')
+        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('--+-+-+-+-+-+--')
+        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('--+-+-+-+-+-+--')
+
 
 
 class Player:
@@ -182,3 +200,6 @@ class Queue:
 
     def is_empty(self):
         return len(self.list) == 0
+
+kubaboard = GameBoard()
+kubaboard.get_board()
