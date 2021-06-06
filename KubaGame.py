@@ -77,7 +77,35 @@ class GameBoard:
         pass
 
     def create_board(self):
-        board_squares = {(1,1): 'X'}
+        board = {}
+        squares = []
+        column = 1
+        row = 1
+        while column < 8:
+            while row < 8:
+                squares.append((column, row))
+                row += 1
+            column += 1
+            row = 1
+
+        for (x,y) in squares:
+            if x < 3 and y < 3:
+                board.update({(x,y): 'W'})
+            elif x > 5 and y > 5:
+                board.update({(x, y): 'W'})
+            elif x > 5 and y < 3:
+                board.update({(x, y): 'B'})
+            elif x < 3 and y > 5:
+                board.update({(x, y): 'B'})
+            else:
+                board.update({(x,y): 'X'})
+
+        board.update({(1,1): 'W'})
+
+        # col_row = [1,2,3,4,5,6,7]
+        # squares = [(x, y) for x, y in enumerate(col_row, 1)]
+        print(board)
+
 
     def get_board(self):
         """
@@ -85,7 +113,7 @@ class GameBoard:
         :return: a visual print of the board in console
         """
         print('--+-+-+-+-+-+--')
-        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('|'++'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
         print('--+-+-+-+-+-+--')
         print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
         print('--+-+-+-+-+-+--')
@@ -202,4 +230,4 @@ class Queue:
         return len(self.list) == 0
 
 kubaboard = GameBoard()
-kubaboard.get_board()
+kubaboard.create_board()
