@@ -16,12 +16,8 @@ class KubaGame:
         :param p1: player name and color of the marble ('PlayerA', 'B')
         :param p2: player name and color of the marble ('PlayerB', 'W')
         """
-        # self.p1_name = p1[0]
-        # self.p2_name = p2[0]
-        # self.p1_color = p1[1]
-        # self.p2_color = p2[1]
         self.p1 = Player(p1[0], p1[1])
-        self.p2 = Player(p1[0], p1[1])
+        self.p2 = Player(p2[0], p2[1])
         self.board = self.create_board()
         self.current_player_turn = None
 
@@ -53,7 +49,18 @@ class KubaGame:
         Will determine whose turn it currently is. Will work with Player class methods.
         :return: Player name
         """
-        return self.current_player_turn
+        if self.current_player_turn is None:
+            return self.current_player_turn
+        else:
+            return self.current_player_turn.get_player_name()
+
+    def set_current_turn(self, player):
+        """
+        Method to set the current turns player
+        :param player: player name
+        :return: player name
+        """
+        self.current_player_turn = player
 
 
     def make_move(self, playername, coordinates, direction):
@@ -64,7 +71,20 @@ class KubaGame:
         :param direction: One of the 4 directions to move
         :return: Either updated board with move, or will state invalid move and show the board again.
         """
-        pass
+        if playername == self.p1.get_player_name():
+            if direction == 'L':
+                pass
+            elif direction == 'R':
+                pass
+            elif direction == 'F':
+                pass
+            elif direction == 'B':
+                pass
+        elif playername == self.p2.get_player_name():
+            pass
+        else:
+            print('No such player matching this name.')
+
 
     def get_winner(self):
         """
@@ -108,11 +128,14 @@ class KubaGame:
         tup_marbles = (white_m, black_m, red_m)
         return tup_marbles
 
-        # white_m = {k: v for k,v in self.board.items() if v == 'W'}
-        # black_m = {k: v for k, v in self.board.items() if v == 'B'}
-        # red_m = {k: v for k, v in self.board.items() if v == 'R'}
-        # tup_marbles = (len(white_m), len(black_m), len(red_m))
-        # return tup_marbles
+    def set_game_winner(self, player):
+        """
+        Method to set the games winner
+        :param player: player name
+        :return: player name
+        """
+        pass
+
 
 class Player:
     """
@@ -128,43 +151,29 @@ class Player:
         """
         self.name = name
         self.color = color
+        self.captured = 0
 
-    def player_marbles(self):
-        # if self.color =
-        pass
-
-    def get_turn_player(self):
+    def get_player_name(self):
         """
         Method to get the current turns player
         :return: player name
         """
-        pass
+        return self.name
 
-    def set_turn_player(self, player):
-        """
-        Method to set the current turns player
-        :param player: player name
-        :return: player name
-        """
-        pass
-
-    def get_game_winner(self):
+    def get_player_color(self):
         """
         Method to get the games winner
         :return: player name
         """
-        pass
+        return self.color
 
-    def set_game_winner(self, player):
-        """
-        Method to set the games winner
-        :param player: player name
-        :return: player name
-        """
-        pass
+    def updated_captured(self):
+        self.captured += 1
 
 
-class Marble:
+
+
+class MarbleMovement:
     """
     Class for marble object of the board game.
     Controls whether or not a marble can move in a given direction
@@ -173,12 +182,15 @@ class Marble:
     def __init__(self):
         self.color = None
 
-    def backward(self):
+    def backward(self, coordinate):
         """
         Method for determining if a move in this direction is valid
         :return: Boolean value for validity of move
         """
-        pass
+        if coordinate[0] == 0 or coordinate[0] == 6:
+            pass
+        else:
+            pass
 
     def left(self):
         """
@@ -201,76 +213,45 @@ class Marble:
         """
         pass
 
-class White(Marble):
+# class White(Marble):
+#
+#     def __init__(self):
+#         self.color = 'W'
+#
+#
+# class Black(Marble):
+#
+#     def __init__(self):
+#         self.color = 'B'
+#
+#
+# class Red(Marble):
+#
+#     def __init__(self):
+#         self.color = 'R'
+#
+# class Queue:
+#     """
+#     An implementation of the Queue ADT that uses Python's built-in lists
+#     Debating on whether to use this for moving marbles on the board....
+#     """
+#
+#     def __init__(self):
+#         self.list = []
+#
+#     def enqueue(self, data):
+#         self.list.append(data)
+#
+#     def dequeue(self):
+#         val = self.list[0]
+#         del self.list[0]
+#         return val
+#
+#     def is_empty(self):
+#         return len(self.list) == 0
 
-    def __init__(self):
-        self.color = 'W'
-
-
-class Black(Marble):
-
-    def __init__(self):
-        self.color = 'B'
-
-
-class Red(Marble):
-
-    def __init__(self):
-        self.color = 'R'
-
-class Queue:
-    """
-    An implementation of the Queue ADT that uses Python's built-in lists
-    Debating on whether to use this for moving marbles on the board....
-    """
-
-    def __init__(self):
-        self.list = []
-
-    def enqueue(self, data):
-        self.list.append(data)
-
-    def dequeue(self):
-        val = self.list[0]
-        del self.list[0]
-        return val
-
-    def is_empty(self):
-        return len(self.list) == 0
-
-
-whitemarble = {'W': White(), 'W': White()}
 game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
 game.create_board()
 game.display_board()
 print(game.get_marble_count())
 # print(whitemarble)
-
-# def create_board(self):
-#     squares = []
-#     column = 0
-#     row = 0
-#     while column < 7:
-#         while row < 7:
-#             squares.append((column, row))
-#             row += 1
-#         column += 1
-#         row = 0
-#
-#     for (x, y) in squares:
-#         if x < 2 and y < 2:
-#             self.board.update({(x, y): {'W': White()}})
-#         elif x > 4 and y > 4:
-#             self.board.update({(x, y): {'W': White()}})
-#         elif x > 4 and y < 2:
-#             self.board.update({(x, y): {'B': Black()}})
-#         elif x < 2 and y > 4:
-#             self.board.update({(x, y): {'B': Black()}})
-#         elif x == 3 and (y == 1 or y == 5):
-#             self.board.update({(x, y): {'R': Red()}})
-#         elif (y == 2 or y == 4) and 1 < x < 5:
-#             self.board.update({(x, y): {'R': Red()}})
-#         elif y == 3 and 0 < x < 6:
-#             self.board.update({(x, y): {'R': Red()}})
-#         else:
-#             self.board.update({(x, y): {'X': None}})
