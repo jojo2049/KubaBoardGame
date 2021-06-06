@@ -9,13 +9,17 @@ class KubaGame:
     Contains all methods for initializing the game and various moves/options a player has.
     Takes as its parameters two tuples and will work the GameBoard, Player, and Marble objects.
     """
-    def __init__(self, p1, p2):
+    def __init__(self, p1: tuple, p2: tuple):
         """
         initializes the Player, GameBoard, and Marble objects of the game
         :param p1: player name and color of the marble ('PlayerA', 'B')
         :param p2: player name and color of the marble ('PlayerB', 'W')
         """
-        pass
+        self.p1_name = p1[0]
+        self.p2_name = p2[0]
+        self.p1_color = p1[1]
+        self.p2_color = p2[1]
+
 
     def get_current_turn(self):
         """
@@ -65,7 +69,7 @@ class KubaGame:
         pass
 
 
-class GameBoard:
+class Board:
     """
     Class for the game board object. Will contain code for visualizing the board and any methods for changing/updating this.
 
@@ -228,6 +232,5 @@ class Queue:
     def is_empty(self):
         return len(self.list) == 0
 
-kubaboard = GameBoard()
-kubaboard.create_board()
-kubaboard.get_board()
+kubaboard = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
+
