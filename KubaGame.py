@@ -74,10 +74,9 @@ class GameBoard:
         """
         Initializes properties for the game board.
         """
-        pass
+        self.board = {}
 
     def create_board(self):
-        board = {}
         squares = []
         column = 1
         row = 1
@@ -90,21 +89,21 @@ class GameBoard:
 
         for (x,y) in squares:
             if x < 3 and y < 3:
-                board.update({(x,y): 'W'})
+                self.board.update({(x, y): 'W'})
             elif x > 5 and y > 5:
-                board.update({(x, y): 'W'})
+                self.board.update({(x, y): 'W'})
             elif x > 5 and y < 3:
-                board.update({(x, y): 'B'})
+                self.board.update({(x, y): 'B'})
             elif x < 3 and y > 5:
-                board.update({(x, y): 'B'})
+                self.board.update({(x, y): 'B'})
+            elif x == 4 and (y == 2 or y == 6):
+                self.board.update({(x, y): 'R'})
+            elif (y == 3 or y == 5) and 2 < x < 6:
+                self.board.update({(x, y): 'R'})
+            elif y == 4 and 1 < x < 7:
+                self.board.update({(x, y): 'R'})
             else:
-                board.update({(x,y): 'X'})
-
-        board.update({(1,1): 'W'})
-
-        # col_row = [1,2,3,4,5,6,7]
-        # squares = [(x, y) for x, y in enumerate(col_row, 1)]
-        print(board)
+                self.board.update({(x, y): 'X'})
 
 
     def get_board(self):
@@ -113,19 +112,19 @@ class GameBoard:
         :return: a visual print of the board in console
         """
         print('--+-+-+-+-+-+--')
-        print('|'++'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('|'+self.board.get((1,1))+'|'+self.board.get((2,1))+'|'+self.board.get((3,1))+'|'+self.board.get((4,1))+'|'+self.board.get((5,1))+'|'+self.board.get((6,1))+'|'+self.board.get((7,1))+'|')
         print('--+-+-+-+-+-+--')
-        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('|'+self.board.get((1,2))+'|'+self.board.get((2,2))+'|'+self.board.get((3,2))+'|'+self.board.get((4,2))+'|'+self.board.get((5,2))+'|'+self.board.get((6,2))+'|'+self.board.get((7,2))+'|')
         print('--+-+-+-+-+-+--')
-        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('|'+self.board.get((1,3))+'|'+self.board.get((2,3))+'|'+self.board.get((3,3))+'|'+self.board.get((4,3))+'|'+self.board.get((5,3))+'|'+self.board.get((6,3))+'|'+self.board.get((7,3))+'|')
         print('--+-+-+-+-+-+--')
-        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('|'+self.board.get((1,4))+'|'+self.board.get((2,4))+'|'+self.board.get((3,4))+'|'+self.board.get((4,4))+'|'+self.board.get((5,4))+'|'+self.board.get((6,4))+'|'+self.board.get((7,4))+'|')
         print('--+-+-+-+-+-+--')
-        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('|'+self.board.get((1,5))+'|'+self.board.get((2,5))+'|'+self.board.get((3,5))+'|'+self.board.get((4,5))+'|'+self.board.get((5,5))+'|'+self.board.get((6,5))+'|'+self.board.get((7,5))+'|')
         print('--+-+-+-+-+-+--')
-        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('|'+self.board.get((1,6))+'|'+self.board.get((2,6))+'|'+self.board.get((3,6))+'|'+self.board.get((4,6))+'|'+self.board.get((5,6))+'|'+self.board.get((6,6))+'|'+self.board.get((7,6))+'|')
         print('--+-+-+-+-+-+--')
-        print('|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|'+'X'+'|')
+        print('|'+self.board.get((1,7))+'|'+self.board.get((2,7))+'|'+self.board.get((3,7))+'|'+self.board.get((4,7))+'|'+self.board.get((5,7))+'|'+self.board.get((6,7))+'|'+self.board.get((7,7))+'|')
         print('--+-+-+-+-+-+--')
 
 
@@ -231,3 +230,4 @@ class Queue:
 
 kubaboard = GameBoard()
 kubaboard.create_board()
+kubaboard.get_board()
