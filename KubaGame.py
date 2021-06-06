@@ -22,14 +22,39 @@ class KubaGame:
         # self.p2_color = p2[1]
         self.p1 = Player(p1[0], p1[1])
         self.p2 = Player(p1[0], p1[1])
-        self.gameboard = Board()
+        self.board = self.create_board()
+        self.current_player_turn = None
+
+    def create_board(self):
+        r0 = ['W', 'W', 'X', 'X', 'X', 'B', 'B']
+        r1 = ['W', 'W', 'X', 'R', 'X', 'B', 'B']
+        r2= ['X', 'X', 'R', 'R', 'R', 'X', 'X']
+        r3 = ['X', 'R', 'R', 'R', 'R', 'R', 'X']
+        r4 = r2.copy()
+        r5 = r1.copy()
+        r5.reverse()
+        r6 = r0.copy()
+        r6.reverse()
+        return [r0, r1, r2, r3, r4, r5, r6]
+
+
+
+    def display_board(self):
+        """
+        Methods to get a visual of the board
+        :return: a visual print of the board in console
+        """
+        for row in self.board:
+            print(row)
+
 
     def get_current_turn(self):
         """
         Will determine whose turn it currently is. Will work with Player class methods.
         :return: Player name
         """
-        pass
+        return self.current_player_turn
+
 
     def make_move(self, playername, coordinates, direction):
         """
@@ -69,86 +94,25 @@ class KubaGame:
         Method to determine the number of marbles on the board. Will work with GameBoard class Methods
         :return: Tuple of White marbles, Black marbles and Red marbles (W,B,R)
         """
-        pass
+        white_m = 0
+        black_m = 0
+        red_m = 0
+        for row in self.board:
+            for square in row:
+                if square == 'W':
+                    white_m += 1
+                elif square == 'B':
+                    black_m += 1
+                elif square == 'R':
+                    red_m += 1
+        tup_marbles = (white_m, black_m, red_m)
+        return tup_marbles
 
-
-class Board:
-    """
-    Class for the game board object. Will contain code for visualizing the board and any methods for changing/updating this.
-
-    """
-
-    def __init__(self):
-        """
-        Initializes properties for the game board.
-        """
-        self.board = {}
-        w1,w2,w3,w4,w5,w6,w7,w8 = White()
-
-    def create_board(self):
-        squares = []
-        column = 1
-        row = 1
-        while column < 8:
-            while row < 8:
-                squares.append((column, row))
-                row += 1
-            column += 1
-            row = 1
-
-        for (x, y) in squares:
-            if x < 3 and y < 3:
-                self.board.update({(x, y): 'W'})
-            elif x > 5 and y > 5:
-                self.board.update({(x, y): 'W'})
-            elif x > 5 and y < 3:
-                self.board.update({(x, y): 'B'})
-            elif x < 3 and y > 5:
-                self.board.update({(x, y): 'B'})
-            elif x == 4 and (y == 2 or y == 6):
-                self.board.update({(x, y): 'R'})
-            elif (y == 3 or y == 5) and 2 < x < 6:
-                self.board.update({(x, y): 'R'})
-            elif y == 4 and 1 < x < 7:
-                self.board.update({(x, y): 'R'})
-            else:
-                self.board.update({(x, y): 'X'})
-
-    def get_board(self):
-        """
-        Methods to get a visual of the board
-        :return: a visual print of the board in console
-        """
-        print('--+-+-+-+-+-+--')
-        print('|' + self.board.get((1, 1)) + '|' + self.board.get((2, 1)) + '|' + self.board.get(
-            (3, 1)) + '|' + self.board.get((4, 1)) + '|' + self.board.get((5, 1)) + '|' + self.board.get(
-            (6, 1)) + '|' + self.board.get((7, 1)) + '|')
-        print('--+-+-+-+-+-+--')
-        print('|' + self.board.get((1, 2)) + '|' + self.board.get((2, 2)) + '|' + self.board.get(
-            (3, 2)) + '|' + self.board.get((4, 2)) + '|' + self.board.get((5, 2)) + '|' + self.board.get(
-            (6, 2)) + '|' + self.board.get((7, 2)) + '|')
-        print('--+-+-+-+-+-+--')
-        print('|' + self.board.get((1, 3)) + '|' + self.board.get((2, 3)) + '|' + self.board.get(
-            (3, 3)) + '|' + self.board.get((4, 3)) + '|' + self.board.get((5, 3)) + '|' + self.board.get(
-            (6, 3)) + '|' + self.board.get((7, 3)) + '|')
-        print('--+-+-+-+-+-+--')
-        print('|' + self.board.get((1, 4)) + '|' + self.board.get((2, 4)) + '|' + self.board.get(
-            (3, 4)) + '|' + self.board.get((4, 4)) + '|' + self.board.get((5, 4)) + '|' + self.board.get(
-            (6, 4)) + '|' + self.board.get((7, 4)) + '|')
-        print('--+-+-+-+-+-+--')
-        print('|' + self.board.get((1, 5)) + '|' + self.board.get((2, 5)) + '|' + self.board.get(
-            (3, 5)) + '|' + self.board.get((4, 5)) + '|' + self.board.get((5, 5)) + '|' + self.board.get(
-            (6, 5)) + '|' + self.board.get((7, 5)) + '|')
-        print('--+-+-+-+-+-+--')
-        print('|' + self.board.get((1, 6)) + '|' + self.board.get((2, 6)) + '|' + self.board.get(
-            (3, 6)) + '|' + self.board.get((4, 6)) + '|' + self.board.get((5, 6)) + '|' + self.board.get(
-            (6, 6)) + '|' + self.board.get((7, 6)) + '|')
-        print('--+-+-+-+-+-+--')
-        print('|' + self.board.get((1, 7)) + '|' + self.board.get((2, 7)) + '|' + self.board.get(
-            (3, 7)) + '|' + self.board.get((4, 7)) + '|' + self.board.get((5, 7)) + '|' + self.board.get(
-            (6, 7)) + '|' + self.board.get((7, 7)) + '|')
-        print('--+-+-+-+-+-+--')
-
+        # white_m = {k: v for k,v in self.board.items() if v == 'W'}
+        # black_m = {k: v for k, v in self.board.items() if v == 'B'}
+        # red_m = {k: v for k, v in self.board.items() if v == 'R'}
+        # tup_marbles = (len(white_m), len(black_m), len(red_m))
+        # return tup_marbles
 
 class Player:
     """
@@ -164,7 +128,6 @@ class Player:
         """
         self.name = name
         self.color = color
-        self.marbles
 
     def player_marbles(self):
         # if self.color =
@@ -276,6 +239,38 @@ class Queue:
         return len(self.list) == 0
 
 
+whitemarble = {'W': White(), 'W': White()}
 game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
-game.gameboard.create_board()
-game.gameboard.get_board()
+game.create_board()
+game.display_board()
+print(game.get_marble_count())
+# print(whitemarble)
+
+# def create_board(self):
+#     squares = []
+#     column = 0
+#     row = 0
+#     while column < 7:
+#         while row < 7:
+#             squares.append((column, row))
+#             row += 1
+#         column += 1
+#         row = 0
+#
+#     for (x, y) in squares:
+#         if x < 2 and y < 2:
+#             self.board.update({(x, y): {'W': White()}})
+#         elif x > 4 and y > 4:
+#             self.board.update({(x, y): {'W': White()}})
+#         elif x > 4 and y < 2:
+#             self.board.update({(x, y): {'B': Black()}})
+#         elif x < 2 and y > 4:
+#             self.board.update({(x, y): {'B': Black()}})
+#         elif x == 3 and (y == 1 or y == 5):
+#             self.board.update({(x, y): {'R': Red()}})
+#         elif (y == 2 or y == 4) and 1 < x < 5:
+#             self.board.update({(x, y): {'R': Red()}})
+#         elif y == 3 and 0 < x < 6:
+#             self.board.update({(x, y): {'R': Red()}})
+#         else:
+#             self.board.update({(x, y): {'X': None}})
