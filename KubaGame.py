@@ -79,7 +79,7 @@ class KubaGame:
             elif direction == 'F':
                 pass
             elif direction == 'B':
-                pass
+                self.move_backward(coordinates)
         elif playername == self.p2.get_player_name():
             pass
         else:
@@ -136,6 +136,44 @@ class KubaGame:
         """
         pass
 
+    def move_backward(self, coordinate):
+        """
+        Method for determining if a move in this direction is valid
+        :return: Boolean value for validity of move
+        """
+        column = coordinate[1]
+        column_squares = []
+        for row in self.board:
+            column_squares.append(row[column])
+        print(column_squares)
+
+        if coordinate[0] == 0:
+            for square in column_squares:
+                pass
+        else:
+            pass
+
+    def move_left(self):
+        """
+        Method for determining if a move in this direction is valid
+        :return: Boolean value for validity of move
+        """
+        pass
+
+    def move_right(self):
+        """
+        Method for determining if a move in this direction is valid
+        :return: Boolean value for validity of move
+        """
+        pass
+
+    def move_forward(self):
+        """
+        Method for determining if a move in this direction is valid
+        :return: Boolean value for validity of move
+        """
+        pass
+
 
 class Player:
     """
@@ -172,46 +210,6 @@ class Player:
 
 
 
-
-class MarbleMovement:
-    """
-    Class for marble object of the board game.
-    Controls whether or not a marble can move in a given direction
-    """
-
-    def __init__(self):
-        self.color = None
-
-    def backward(self, coordinate):
-        """
-        Method for determining if a move in this direction is valid
-        :return: Boolean value for validity of move
-        """
-        if coordinate[0] == 0 or coordinate[0] == 6:
-            pass
-        else:
-            pass
-
-    def left(self):
-        """
-        Method for determining if a move in this direction is valid
-        :return: Boolean value for validity of move
-        """
-        pass
-
-    def right(self):
-        """
-        Method for determining if a move in this direction is valid
-        :return: Boolean value for validity of move
-        """
-        pass
-
-    def forward(self):
-        """
-        Method for determining if a move in this direction is valid
-        :return: Boolean value for validity of move
-        """
-        pass
 
 # class White(Marble):
 #
@@ -254,4 +252,5 @@ game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
 game.create_board()
 game.display_board()
 print(game.get_marble_count())
+game.make_move('PlayerA', (6,5), 'B')
 # print(whitemarble)
