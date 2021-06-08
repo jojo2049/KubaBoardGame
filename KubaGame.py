@@ -19,7 +19,7 @@ class KubaGame:
         self.p1 = Player(p1[0], p1[1])
         self.p2 = Player(p2[0], p2[1])
         self.board = self.create_board()
-        self.current_player_turn = None
+        self.current_player = None
 
     def create_board(self):
         r0 = ['W', 'W', 'X', 'X', 'X', 'B', 'B']
@@ -44,7 +44,7 @@ class KubaGame:
             print(row)
 
 
-    def get_current_turn(self):
+    def get_current_player_name(self):
         """
         Will determine whose turn it currently is. Will work with Player class methods.
         :return: Player name
@@ -54,7 +54,7 @@ class KubaGame:
         else:
             return self.current_player_turn.get_player_name()
 
-    def set_current_turn(self, player):
+    def set_current_player(self, player):
         """
         Method to set the current turns player
         :param player: player name
@@ -136,22 +136,51 @@ class KubaGame:
         """
         pass
 
+    def get_current_player(self):
+        return self.current_player
+
     def move_backward(self, coordinate):
         """
         Method for determining if a move in this direction is valid
         :return: Boolean value for validity of move
         """
+        move = 1
         column = coordinate[1]
         column_squares = []
         for row in self.board:
             column_squares.append(row[column])
-        print(column_squares)
 
         if coordinate[0] == 0:
-            for square in column_squares:
-                pass
-        else:
-            pass
+            temp = column_squares.pop()
+            column_squares.insert(0, 'X')
+            if temp == 'R':
+                self.get_current_player().update_captured
+                if self.get_current_player() == self.p1:
+                    self.set_current_player(self.p2)
+                else:
+                    self.set_current_player(self.p1)
+            else:
+                if self.get_current_player() == self.p1:
+                    self.set_current_player(self.p2)
+                else:
+                    self.set_current_player(self.p1)
+        elif coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X' or 'R':
+            return
+        elif coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X' or 'R':
+            row = coordinate[0]
+            location = row
+            for item in column_squares[row:]:
+                if item == 'X':
+                    column_squares.pop(location)
+                    column_squares.insert(column, 'X')
+                    break
+                location += 1
+
+        tracker = 0
+        for square in column_squares:
+            self.board[tracker][column] = square
+            tracker += 1
+
 
     def move_left(self):
         """
@@ -252,5 +281,7 @@ game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
 game.create_board()
 game.display_board()
 print(game.get_marble_count())
-game.make_move('PlayerA', (6,5), 'B')
+game.make_move('PlayerA', (0,5), 'B')
+print('newboard')
+game.display_board()
 # print(whitemarble)
