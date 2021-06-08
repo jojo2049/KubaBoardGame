@@ -49,10 +49,10 @@ class KubaGame:
         Will determine whose turn it currently is. Will work with Player class methods.
         :return: Player name
         """
-        if self.current_player_turn is None:
-            return self.current_player_turn
+        if self.current_player is None:
+            return self.current_player
         else:
-            return self.current_player_turn.get_player_name()
+            return self.current_player.get_player_name()
 
     def set_current_player(self, player):
         """
@@ -60,7 +60,7 @@ class KubaGame:
         :param player: player name
         :return: player name
         """
-        self.current_player_turn = player
+        self.current_player = player
 
 
     def make_move(self, playername, coordinates, direction):
@@ -71,7 +71,8 @@ class KubaGame:
         :param direction: One of the 4 directions to move
         :return: Either updated board with move, or will state invalid move and show the board again.
         """
-        if playername == self.p1.get_player_name():
+
+        if self.current_player is None:
             if direction == 'L':
                 pass
             elif direction == 'R':
@@ -80,10 +81,23 @@ class KubaGame:
                 pass
             elif direction == 'B':
                 self.move_backward(coordinates)
-        elif playername == self.p2.get_player_name():
-            pass
+
+            if playername == self.p1.get_player_name():
+                self.set_current_player(self.p2)
+            else:
+                self.set_current_player(self.p1)
+
+        elif playername == self.current_player:
+            if direction == 'L':
+                pass
+            elif direction == 'R':
+                pass
+            elif direction == 'F':
+                pass
+            elif direction == 'B':
+                self.move_backward(coordinates)
         else:
-            print('No such player matching this name.')
+            return
 
 
     def get_winner(self):
@@ -150,36 +164,41 @@ class KubaGame:
         for row in self.board:
             column_squares.append(row[column])
 
-        if coordinate[0] == 0:
+        if coordinate[0] == 0 and 'X' in column_squares is False:
             temp = column_squares.pop()
             column_squares.insert(0, 'X')
-            if temp == 'R':
-                self.get_current_player().update_captured
-                if self.get_current_player() == self.p1:
-                    self.set_current_player(self.p2)
-                else:
-                    self.set_current_player(self.p1)
-            else:
-                if self.get_current_player() == self.p1:
-                    self.set_current_player(self.p2)
-                else:
-                    self.set_current_player(self.p1)
-        elif coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X' or 'R':
-            return
-        elif coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X' or 'R':
+
+        elif (coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X' or 'R') or (coordinate[0] == 0 and 'X' in column_squares is True):
+            print(column_squares)
             row = coordinate[0]
             location = row
             for item in column_squares[row:]:
                 if item == 'X':
-                    column_squares.pop(location)
-                    column_squares.insert(column, 'X')
+                    temp = column_squares.pop(location)
+                    column_squares.insert(row, 'X')
                     break
                 location += 1
+            print(column_squares)
+
+        elif coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X' or 'R':
+            return
 
         tracker = 0
         for square in column_squares:
             self.board[tracker][column] = square
             tracker += 1
+
+        if temp == 'R':
+            self.get_current_player().update_captured
+            if self.get_current_player() == self.p1:
+                self.set_current_player(self.p2)
+            else:
+                self.set_current_player(self.p1)
+        else:
+            if self.get_current_player() == self.p1:
+                self.set_current_player(self.p2)
+            else:
+                self.set_current_player(self.p1)
 
 
     def move_left(self):
@@ -281,7 +300,17 @@ game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
 game.create_board()
 game.display_board()
 print(game.get_marble_count())
+print(game.current_player)
 game.make_move('PlayerA', (0,5), 'B')
 print('newboard')
 game.display_board()
+print(game.current_player.get_player_name())
+game.make_move('PlayerA', (1,5), 'B')
+print('newboard2')
+game.display_board()
+print(game.current_player.get_player_name())
+game.make_move('PlayerB', (1,5), 'B')
+print('newboard3')
+game.display_board()
+print(game.current_player.get_player_name())
 # print(whitemarble)
