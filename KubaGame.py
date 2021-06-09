@@ -78,7 +78,7 @@ class KubaGame:
             elif direction == 'R':
                 pass
             elif direction == 'F':
-                pass
+                self.move_forward(coordinates)
             elif direction == 'B':
                 self.move_backward(coordinates)
 
@@ -87,17 +87,22 @@ class KubaGame:
             else:
                 self.set_current_player(self.p1)
 
-        elif playername == self.current_player:
+        elif playername == self.current_player.get_player_name():
             if direction == 'L':
                 pass
             elif direction == 'R':
                 pass
             elif direction == 'F':
-                pass
+                self.move_forward(coordinates)
             elif direction == 'B':
                 self.move_backward(coordinates)
+
+            if playername == self.p1.get_player_name():
+                self.set_current_player(self.p2)
+            else:
+                self.set_current_player(self.p1)
         else:
-            return
+            return False
 
 
     def get_winner(self):
@@ -115,13 +120,15 @@ class KubaGame:
         """
         pass
 
-    def get_marble(self, coord):
+    def get_marble(self, coordinate):
         """
         Method to determine what color marble (if any) is at a given coordinate
         :param coord:
         :return: Marble color found at square or 'X'
         """
-        pass
+        row = coordinate[0]
+        column = coordinate[1]
+        return self.board[row][column]
 
     def get_marble_count(self):
         """
@@ -158,7 +165,6 @@ class KubaGame:
         Method for determining if a move in this direction is valid
         :return: Boolean value for validity of move
         """
-        move = 1
         column = coordinate[1]
         column_squares = []
         for row in self.board:
@@ -181,7 +187,7 @@ class KubaGame:
             print(column_squares)
 
         elif coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X' or 'R':
-            return
+            return False
 
         tracker = 0
         for square in column_squares:
@@ -200,6 +206,8 @@ class KubaGame:
             else:
                 self.set_current_player(self.p1)
 
+        return True
+
 
     def move_left(self):
         """
@@ -215,12 +223,58 @@ class KubaGame:
         """
         pass
 
-    def move_forward(self):
+    def move_forward(self, coordinate):
         """
         Method for determining if a move in this direction is valid
         :return: Boolean value for validity of move
         """
-        pass
+        column = coordinate[1]
+        column_squares = []
+        for row in self.board:
+            column_squares.append(row[column])
+
+        column_squares.reverse()
+
+        if coordinate[0] == 6 and 'X' in column_squares is False:
+            temp = column_squares.pop(6)
+            column_squares.insert(0, 'X')
+
+        elif (coordinate[0] != 6 and column_squares[coordinate[0] + 1] != 'X' or 'R') or (
+                coordinate[0] == 6 and 'X' in column_squares is True):
+            print(column_squares)
+            row = 6-coordinate[0]
+            location = row
+            for item in column_squares[row:]:
+                if item == 'X':
+                    temp = column_squares.pop(location)
+                    column_squares.insert(row, 'X')
+                    break
+                location += 1
+            print(column_squares)
+
+        elif coordinate[0] != 0 and column_squares[coordinate[0] + 1] != 'X' or 'R':
+            return False
+
+
+        column_squares.reverse()
+        tracker = 0
+        for square in column_squares:
+            self.board[tracker][column] = square
+            tracker += 1
+
+        if temp == 'R':
+            self.get_current_player().update_captured
+            if self.get_current_player() == self.p1:
+                self.set_current_player(self.p2)
+            else:
+                self.set_current_player(self.p1)
+        else:
+            if self.get_current_player() == self.p1:
+                self.set_current_player(self.p2)
+            else:
+                self.set_current_player(self.p1)
+
+        return True
 
 
 class Player:
@@ -313,4 +367,7 @@ game.make_move('PlayerB', (1,5), 'B')
 print('newboard3')
 game.display_board()
 print(game.current_player.get_player_name())
+game.make_move('PlayerA', (6,1), 'F')
+print('newboard4')
+game.display_board()
 # print(whitemarble)
