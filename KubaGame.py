@@ -20,8 +20,13 @@ class KubaGame:
         self.p2 = Player(p2[0], p2[1])
         self.board = self.create_board()
         self.current_player = None
+        self.winner = None
 
     def create_board(self):
+        """
+        Method to  initialize the board for start of game
+        :return: a list of list as the board
+        """
         r0 = ['W', 'W', 'X', 'X', 'X', 'B', 'B']
         r1 = ['W', 'W', 'X', 'R', 'X', 'B', 'B']
         r2 = ['X', 'X', 'R', 'R', 'R', 'X', 'X']
@@ -32,8 +37,6 @@ class KubaGame:
         r6 = r0.copy()
         r6.reverse()
         return [r0, r1, r2, r3, r4, r5, r6]
-
-
 
     def display_board(self):
         """
@@ -46,7 +49,7 @@ class KubaGame:
 
     def get_current_player_name(self):
         """
-        Will determine whose turn it currently is. Will work with Player class methods.
+        Will check the current_player object and return playername
         :return: Player name
         """
         if self.current_player is None:
@@ -57,7 +60,7 @@ class KubaGame:
     def set_current_player(self, player):
         """
         Method to set the current turns player
-        :param player: player name
+        :param player: player object
         :return: player name
         """
         self.current_player = player
@@ -74,22 +77,42 @@ class KubaGame:
 
     def make_move(self, playername, coordinate, direction):
         """
-        Method to initiate a move. Will work with Marble and GameBoard classes to determine validity and
-        :param playername: Player making the move
+        Method to initiate a move.
+        :param playername: Player name making the move
         :param coordinate: Coordinates of marble to move
         :param direction: One of the 4 directions to move
         :return: Either updated board with move, or will state invalid move and show the board again.
         """
 
+        # Checks if there is a winner
+        if self.winner is not None:
+            return False
+
+        #sets winner if no more marbles of either players color
+        if 0 in self.get_marble_count():
+            if self.get_marble_count()[0] == 0:
+                if self.p1.color == 'B':
+                    self.set_game_winner(self.p2)
+                else:
+                    self.set_game_winner(self.p1)
+            if self.get_marble_count()[1] == 0:
+                if self.p1.color == 'W':
+                    self.set_game_winner(self.p2)
+                else:
+                    self.set_game_winner(self.p1)
+            return False
+
+        #Conditional for first move
         if self.current_player is None:
             if playername == self.p1.get_player_name():
                 self. set_current_player(self.p1)
             else:
                 self.set_current_player(self.p2)
 
+        #Conditionals any moves other than first
         if playername == self.current_player.get_player_name() and self.current_player.get_player_color() == self.get_marble(coordinate):
             if direction == 'L':
-                pass
+                return self.move_left(coordinate)
             elif direction == 'R':
                 return self.move_right(coordinate)
             elif direction == 'F':
@@ -97,28 +120,20 @@ class KubaGame:
             elif direction == 'B':
                 return self.move_backward(coordinate)
 
-            if playername == self.p1.get_player_name():
-                self.set_current_player(self.p2)
-                print('p2change')
-                return True
-            else:
-                self.set_current_player(self.p1)
-                print('p1change')
-                return True
         else:
             return False
 
 
     def get_winner(self):
         """
-        method to determine if there is a winner or not when called. Will work with Player class methods.
+        method to determine if there is a winner or not when called.
         :return: Player name or None
         """
-        pass
+        return self.winner.get_player_name()
 
     def get_captured(self, playername):
         """
-        Method  to determine how many red marbles a player has captured. Will work with GameBoard class methods.
+        Method  to determine how many red marbles a player has captured.
         :param playername: Player name
         :return: Count of red marbles that player has captured
         """
@@ -139,7 +154,7 @@ class KubaGame:
 
     def get_marble_count(self):
         """
-        Method to determine the number of marbles on the board. Will work with GameBoard class Methods
+        Method to determine the number of marbles on the board.
         :return: Tuple of White marbles, Black marbles and Red marbles (W,B,R)
         """
         white_m = 0
@@ -159,17 +174,16 @@ class KubaGame:
     def set_game_winner(self, player):
         """
         Method to set the games winner
-        :param player: player name
-        :return: player name
+        :param player: player object
         """
-        pass
+        self.winner = player
 
-    def get_current_player(self):
+    def get_current_turn(self):
         return self.current_player
 
     def move_backward(self, coordinate):
         """
-        Method for determining if a move in this direction is valid
+        Method for determining if a move in this direction is valid and making that move if so
         :return: Boolean value for validity of move
         """
 
@@ -177,13 +191,17 @@ class KubaGame:
         row = coordinate[0]
         column_squares = []
         temp = None
+
+        #creates a list from the column to work with
         for list in self.board:
             column_squares.append(list[column])
 
+        #scenario for moving an edge square with no blanks in the column
         if row == 0 and 'X' not in column_squares:
             temp = column_squares.pop()
             column_squares.insert(0, 'X')
 
+        #scenario for any other square in a column with blank spaces within
         elif (row != 6 and column_squares[row-1] == 'X') or (row == 0 and 'X' in column_squares):
             location = row
             if 'X' in column_squares[row:]:
@@ -197,17 +215,22 @@ class KubaGame:
                 column_squares.insert(row, 'X')
                 temp = column_squares.pop()
 
-
+        #scenario if the square to move does not have a blank square behind  it
         elif row != 6 and column_squares[row-1] != 'X':
             return False
 
+        #updates board column with working column values
         tracker = 0
         for square in column_squares:
             self.board[tracker][column] = square
             tracker += 1
 
+        #updates captured based on mable that fell off. Declares winner if 7 R is reached. Changes player afterwards.
         if temp == 'R':
-            self.get_current_player().update_captured()
+            self.get_current_turn().update_captured()
+            if self.current_player.captured == 7:
+                self.set_game_winner(self.current_player)
+                return True
             self.change_current_player()
         else:
             self.change_current_player()
@@ -215,58 +238,103 @@ class KubaGame:
         return True
 
 
-
-
-    def move_left(self):
+    def move_left(self, coordinate):
         """
-        Method for determining if a move in this direction is valid
+        Method for determining if a move in this direction is valid and making that move if so
         :return: Boolean value for validity of move
         """
-        pass
+        column = 6-coordinate[1]
+        row = coordinate[0]
+        working_row = self.board[row]
+        temp = None
+
+        #reverses a row to work with
+        working_row.reverse()
+
+        # scenario for moving an edge square with no blanks in the row
+        if column == 0 and 'X' not in working_row:
+            temp = working_row.pop()
+            working_row.insert(0, 'X')
+
+        # scenario for any other square in a row with blank spaces within
+        elif (column != 6 and working_row[column - 1] == 'X') or (column == 0 and 'X' in working_row):
+            location = column
+            if 'X' in working_row[column:]:
+                for item in working_row[column:]:
+                    if item == 'X':
+                        working_row.pop(location)
+                        working_row.insert(column, 'X')
+                        break
+                    location += 1
+            else:
+                working_row.insert(column, 'X')
+                temp = working_row.pop()
+
+        # scenario if the square to move does not have a blank square behind  it
+        elif column != 6 and working_row[column - 1] != 'X':
+            return False
+
+        #reverses final row again for insertion back into game board
+        working_row.reverse()
+        self.board[row] = working_row
+
+        # updates captured based on mable that fell off. Declares winner if 7 R is reached. Changes player afterwards.
+        if temp == 'R':
+            self.get_current_turn().update_captured()
+            if self.current_player.captured == 7:
+                self.set_game_winner(self.current_player)
+                return True
+            self.change_current_player()
+        else:
+            self.change_current_player()
+
+        return True
 
     def move_right(self, coordinate):
         """
         Method for determining if a move in this direction is valid
         :return: Boolean value for validity of move
         """
-        row = coordinate[0]
         column = coordinate[1]
+        row = coordinate[0]
+        working_row = self.board[row]
+        temp = None
 
-        if column == 0 and 'X' in self.board[row] is False:
-            temp = self.board[row].pop()
-            self.board[row].insert(0, 'X')
+        # scenario for moving an edge square with no blanks in the column
+        if column == 0 and 'X' not in working_row:
+            temp = working_row.pop()
+            working_row.insert(0, 'X')
 
-        elif (column != 6 and self.board[row[column] - 1] != 'X' or 'R') or (
-                coordinate[0] == 0 and 'X' in self.board[row] is True):
-            print(self.board[row])
-            location = row
-            for item in self.board[row:]:
-                if item == 'X':
-                    temp = self.board.pop(location)
-                    self.board.insert(row, 'X')
-                    break
-                location += 1
-            print(self.board[row])
+        # scenario for any other square in a column with blank spaces within
+        elif (column != 6 and working_row[column - 1] == 'X') or (column == 0 and 'X' in working_row):
+            location = column
+            if 'X' in working_row[column:]:
+                for item in working_row[column:]:
+                    if item == 'X':
+                        working_row.pop(location)
+                        working_row.insert(column, 'X')
+                        break
+                    location += 1
+            else:
+                working_row.insert(column, 'X')
+                temp = working_row.pop()
 
-        elif coordinate[0] != 6 and self.board[row[column] - 1] != 'X' or 'R':
+        # scenario if the square to move does not have a blank square behind  it
+        elif column != 6 and working_row[column - 1] != 'X':
             return False
 
-        # tracker = 0
-        # for square in column_squares:
-        #     self.board[tracker][column] = square
-        #     tracker += 1
+        #inserts working row into game board
+        self.board[row] = working_row
 
+        # updates board column with working column values
         if temp == 'R':
-            self.get_current_player().update_captured()
-            if self.get_current_player() == self.p1:
-                self.set_current_player(self.p2)
-            else:
-                self.set_current_player(self.p1)
+            self.get_current_turn().update_captured()
+            if self.current_player.captured == 7:
+                self.set_game_winner(self.current_player)
+                return True
+            self.change_current_player()
         else:
-            if self.get_current_player() == self.p1:
-                self.set_current_player(self.p2)
-            else:
-                self.set_current_player(self.p1)
+            self.change_current_player()
 
         return True
 
@@ -279,20 +347,21 @@ class KubaGame:
         row = 6-coordinate[0]
         column_squares = []
         temp = None
+
+        # creates a list from the column to work with
         for list in self.board:
             column_squares.append(list[column])
 
+        #reverses column to work with
         column_squares.reverse()
 
-        print(column_squares)
-        print(coordinate)
+        # scenario for moving an edge square with no blanks in the column
         if row == 0 and 'X' not in column_squares:
-            print('scenario1')
             temp = column_squares.pop()
             column_squares.insert(0, 'X')
 
+        # scenario for any other square in a column with blank spaces within
         elif (row != 6 and column_squares[row - 1] == 'X') or (row == 0 and 'X' in column_squares):
-            print('scenario2')
             location = row
             if 'X' in column_squares[row:]:
                 for item in column_squares[row:]:
@@ -303,22 +372,27 @@ class KubaGame:
                     location += 1
             else:
                 column_squares.insert(row, 'X')
-                print(column_squares)
                 temp = column_squares.pop()
 
+        # scenario if the square to move does not have a blank square behind  it
         elif row != 6 and column_squares[row - 1] != 'X':
-            print('scenario3')
             return False
 
+        #reverses row back to original order
         column_squares.reverse()
 
+        # updates board column with working column values
         tracker = 0
         for square in column_squares:
             self.board[tracker][column] = square
             tracker += 1
 
+        # updates captured based on mable that fell off. Declares winner if 7 R is reached. Changes player afterwards.
         if temp == 'R':
-            self.get_current_player().update_captured()
+            self.get_current_turn().update_captured()
+            if self.current_player.captured == 7:
+                self.set_game_winner(self.current_player)
+                return True
             self.change_current_player()
         else:
             self.change_current_player()
@@ -359,41 +433,6 @@ class Player:
     def update_captured(self):
         self.captured = 1
 
-
-
-# game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
-# game.create_board()
-# print('current player is', end=': ')
-# print(game.current_player)
-# game.make_move('PlayerA', (0,0), 'B')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# game.make_move('PlayerB', (6,1), 'F')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# game.make_move('PlayerA', (1,0), 'B')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# game.make_move('PlayerB', (5,1), 'F')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# game.make_move('PlayerA', (2,0), 'B')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# game.make_move('PlayerB', (4,1), 'F')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# print(game.p2.captured)
-# game.make_move('PlayerA', (0,1), 'B')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
 
 
 
