@@ -24,7 +24,7 @@ class KubaGame:
     def create_board(self):
         r0 = ['W', 'W', 'X', 'X', 'X', 'B', 'B']
         r1 = ['W', 'W', 'X', 'R', 'X', 'B', 'B']
-        r2= ['X', 'X', 'R', 'R', 'R', 'X', 'X']
+        r2 = ['X', 'X', 'R', 'R', 'R', 'X', 'X']
         r3 = ['X', 'R', 'R', 'R', 'R', 'R', 'X']
         r4 = r2.copy()
         r5 = r1.copy()
@@ -63,7 +63,7 @@ class KubaGame:
         self.current_player = player
 
 
-    def make_move(self, playername, coordinates, direction):
+    def make_move(self, playername, coordinate, direction):
         """
         Method to initiate a move. Will work with Marble and GameBoard classes to determine validity and
         :param playername: Player making the move
@@ -73,29 +73,38 @@ class KubaGame:
         """
 
         if self.current_player is None:
-            if direction == 'L':
-                pass
-            elif direction == 'R':
-                pass
-            elif direction == 'F':
-                self.move_forward(coordinates)
-            elif direction == 'B':
-                self.move_backward(coordinates)
-
             if playername == self.p1.get_player_name():
-                self.set_current_player(self.p2)
+                self. set_current_player(self.p1)
             else:
-                self.set_current_player(self.p1)
+                self.set_current_player(self.p2)
+
+            if self.current_player.get_player_color() == self.get_marble(coordinate):
+                if direction == 'L':
+                    pass
+                elif direction == 'R':
+                    self.move_right(coordinate)
+                elif direction == 'F':
+                    self.move_forward(coordinate)
+                elif direction == 'B':
+                    self.move_backward(coordinate)
+
+                if playername == self.p1.get_player_name():
+                    self.set_current_player(self.p2)
+                else:
+                    self.set_current_player(self.p1)
 
         elif playername == self.current_player.get_player_name():
-            if direction == 'L':
-                pass
-            elif direction == 'R':
-                pass
-            elif direction == 'F':
-                self.move_forward(coordinates)
-            elif direction == 'B':
-                self.move_backward(coordinates)
+            if self.current_player.get_player_color() == self.get_marble(coordinate):
+                if direction == 'L':
+                    pass
+                elif direction == 'R':
+                    self.move_right(coordinate)
+                elif direction == 'F':
+                    self.move_forward(coordinate)
+                elif direction == 'B':
+                    self.move_backward(coordinate)
+            else:
+                return False
 
             if playername == self.p1.get_player_name():
                 self.set_current_player(self.p2)
@@ -216,12 +225,51 @@ class KubaGame:
         """
         pass
 
-    def move_right(self):
+    def move_right(self, coordinate):
         """
         Method for determining if a move in this direction is valid
         :return: Boolean value for validity of move
         """
-        pass
+        row = coordinate[0]
+        column = coordinate[1]
+
+        if column == 0 and 'X' in self.board[row] is False:
+            temp = self.board[row].pop()
+            self.board[row].insert(0, 'X')
+
+        elif (column != 6 and self.board[row[column] - 1] != 'X' or 'R') or (
+                coordinate[0] == 0 and 'X' in self.board[row] is True):
+            print(self.board[row])
+            location = row
+            for item in self.board[row:]:
+                if item == 'X':
+                    temp = self.board.pop(location)
+                    self.board.insert(row, 'X')
+                    break
+                location += 1
+            print(self.board[row])
+
+        elif coordinate[0] != 6 and self.board[row[column] - 1] != 'X' or 'R':
+            return False
+
+        # tracker = 0
+        # for square in column_squares:
+        #     self.board[tracker][column] = square
+        #     tracker += 1
+
+        if temp == 'R':
+            self.get_current_player().update_captured
+            if self.get_current_player() == self.p1:
+                self.set_current_player(self.p2)
+            else:
+                self.set_current_player(self.p1)
+        else:
+            if self.get_current_player() == self.p1:
+                self.set_current_player(self.p2)
+            else:
+                self.set_current_player(self.p1)
+
+        return True
 
     def move_forward(self, coordinate):
         """
@@ -359,7 +407,7 @@ game.make_move('PlayerA', (0,5), 'B')
 print('newboard')
 game.display_board()
 print(game.current_player.get_player_name())
-game.make_move('PlayerA', (1,5), 'B')
+game.make_move('PlayerA', (1,1), 'B')
 print('newboard2')
 game.display_board()
 print(game.current_player.get_player_name())
