@@ -62,12 +62,21 @@ class KubaGame:
         """
         self.current_player = player
 
+    def change_current_player(self):
+        """
+        Method to swap current player
+        """
+        if self.current_player == self.p1:
+            self.current_player = self.p2
+        else:
+            self.current_player = self.p1
+
 
     def make_move(self, playername, coordinate, direction):
         """
         Method to initiate a move. Will work with Marble and GameBoard classes to determine validity and
         :param playername: Player making the move
-        :param coordinates: Coordinates of marble to move
+        :param coordinate: Coordinates of marble to move
         :param direction: One of the 4 directions to move
         :return: Either updated board with move, or will state invalid move and show the board again.
         """
@@ -78,38 +87,24 @@ class KubaGame:
             else:
                 self.set_current_player(self.p2)
 
-            if self.current_player.get_player_color() == self.get_marble(coordinate):
-                if direction == 'L':
-                    pass
-                elif direction == 'R':
-                    self.move_right(coordinate)
-                elif direction == 'F':
-                    self.move_forward(coordinate)
-                elif direction == 'B':
-                    self.move_backward(coordinate)
-
-                if playername == self.p1.get_player_name():
-                    self.set_current_player(self.p2)
-                else:
-                    self.set_current_player(self.p1)
-
-        elif playername == self.current_player.get_player_name():
-            if self.current_player.get_player_color() == self.get_marble(coordinate):
-                if direction == 'L':
-                    pass
-                elif direction == 'R':
-                    self.move_right(coordinate)
-                elif direction == 'F':
-                    self.move_forward(coordinate)
-                elif direction == 'B':
-                    self.move_backward(coordinate)
-            else:
-                return False
+        if playername == self.current_player.get_player_name() and self.current_player.get_player_color() == self.get_marble(coordinate):
+            if direction == 'L':
+                pass
+            elif direction == 'R':
+                self.move_right(coordinate)
+            elif direction == 'F':
+                self.move_forward(coordinate)
+            elif direction == 'B':
+                self.move_backward(coordinate)
 
             if playername == self.p1.get_player_name():
                 self.set_current_player(self.p2)
+                print('p2change')
+                return True
             else:
                 self.set_current_player(self.p1)
+                print('p1change')
+                return True
         else:
             return False
 
@@ -127,12 +122,15 @@ class KubaGame:
         :param playername: Player name
         :return: Count of red marbles that player has captured
         """
-        pass
+        if playername == self.p1.get_player_name():
+            return self.p1.captured
+        else:
+            return self.p2.captured
 
     def get_marble(self, coordinate):
         """
         Method to determine what color marble (if any) is at a given coordinate
-        :param coord:
+        :param coordinate provided as tuple
         :return: Marble color found at square or 'X'
         """
         row = coordinate[0]
@@ -174,28 +172,43 @@ class KubaGame:
         Method for determining if a move in this direction is valid
         :return: Boolean value for validity of move
         """
-        column = coordinate[1]
-        column_squares = []
-        for row in self.board:
-            column_squares.append(row[column])
 
-        if coordinate[0] == 0 and 'X' in column_squares is False:
+        column = coordinate[1]
+        row = coordinate[0]
+        column_squares = []
+        temp = None
+        for list in self.board:
+            column_squares.append(list[column])
+
+        print(column_squares)
+        print(coordinate)
+        if 'X' in column_squares is False:
+            print('x is in squares')
+
+        if row == 0 and 'X' not in column_squares:
+            print('scenario1')
             temp = column_squares.pop()
             column_squares.insert(0, 'X')
 
-        elif (coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X' or 'R') or (coordinate[0] == 0 and 'X' in column_squares is True):
+        elif (row != 6 and column_squares[row-1] == 'X') or (row == 0 and 'X' in column_squares):
+            print('scenario2')
             print(column_squares)
-            row = coordinate[0]
             location = row
-            for item in column_squares[row:]:
-                if item == 'X':
-                    temp = column_squares.pop(location)
-                    column_squares.insert(row, 'X')
-                    break
-                location += 1
-            print(column_squares)
+            if 'X' in column_squares[row:]:
+                for item in column_squares[row:]:
+                    if item == 'X':
+                        column_squares.pop(location)
+                        column_squares.insert(row, 'X')
+                        break
+                    location += 1
+            else:
+                column_squares.insert(row, 'X')
+                print(column_squares)
+                temp = column_squares.pop()
 
-        elif coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X' or 'R':
+
+        elif coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X':
+            print('scenario3')
             return False
 
         tracker = 0
@@ -204,18 +217,12 @@ class KubaGame:
             tracker += 1
 
         if temp == 'R':
-            self.get_current_player().update_captured
-            if self.get_current_player() == self.p1:
-                self.set_current_player(self.p2)
-            else:
-                self.set_current_player(self.p1)
+            self.get_current_player().update_captured()
+            self.change_current_player()
         else:
-            if self.get_current_player() == self.p1:
-                self.set_current_player(self.p2)
-            else:
-                self.set_current_player(self.p1)
+            self.change_current_player()
 
-        return True
+
 
 
     def move_left(self):
@@ -258,7 +265,7 @@ class KubaGame:
         #     tracker += 1
 
         if temp == 'R':
-            self.get_current_player().update_captured
+            self.get_current_player().update_captured()
             if self.get_current_player() == self.p1:
                 self.set_current_player(self.p2)
             else:
@@ -311,7 +318,7 @@ class KubaGame:
             tracker += 1
 
         if temp == 'R':
-            self.get_current_player().update_captured
+            self.get_current_player().update_captured()
             if self.get_current_player() == self.p1:
                 self.set_current_player(self.p2)
             else:
@@ -355,67 +362,73 @@ class Player:
         """
         return self.color
 
-    def updated_captured(self):
-        self.captured += 1
+    def update_captured(self):
+        self.captured = 1
 
 
-
-
-# class White(Marble):
-#
-#     def __init__(self):
-#         self.color = 'W'
-#
-#
-# class Black(Marble):
-#
-#     def __init__(self):
-#         self.color = 'B'
-#
-#
-# class Red(Marble):
-#
-#     def __init__(self):
-#         self.color = 'R'
-#
-# class Queue:
-#     """
-#     An implementation of the Queue ADT that uses Python's built-in lists
-#     Debating on whether to use this for moving marbles on the board....
-#     """
-#
-#     def __init__(self):
-#         self.list = []
-#
-#     def enqueue(self, data):
-#         self.list.append(data)
-#
-#     def dequeue(self):
-#         val = self.list[0]
-#         del self.list[0]
-#         return val
-#
-#     def is_empty(self):
-#         return len(self.list) == 0
 
 game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
 game.create_board()
-game.display_board()
-print(game.get_marble_count())
+print('current player is', end=': ')
 print(game.current_player)
-game.make_move('PlayerA', (0,5), 'B')
-print('newboard')
+game.make_move('PlayerA', (0,1), 'B')
 game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerB', (0,6), 'B')
+game.display_board()
+print('current player is', end=': ')
 print(game.current_player.get_player_name())
 game.make_move('PlayerA', (1,1), 'B')
-print('newboard2')
 game.display_board()
+print('current player is', end=': ')
 print(game.current_player.get_player_name())
-game.make_move('PlayerB', (1,5), 'B')
-print('newboard3')
+game.make_move('PlayerB', (1,6), 'B')
 game.display_board()
+print('current player is', end=': ')
 print(game.current_player.get_player_name())
-game.make_move('PlayerA', (6,1), 'F')
-print('newboard4')
+game.make_move('PlayerA', (2,1), 'B')
 game.display_board()
-# print(whitemarble)
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+print(game.get_captured('PlayerA'))
+game.make_move('PlayerB', (2,6), 'B')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerA', (3,1), 'B')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+print(game.get_captured('PlayerA'))
+game.make_move('PlayerB', (3,6), 'B')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerA', (4,1), 'B')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+print(game.get_captured('PlayerA'))
+
+
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player.get_player_name())
+# game.make_move('PlayerA', (1,1), 'B')
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player.get_player_name())
+# game.make_move('PlayerA', (0,1), 'B')
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player.get_player_name())
+# game.make_move('PlayerB', (1,5), 'B')
+# print('newboard3')
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player.get_player_name())
+# game.make_move('PlayerA', (6,1), 'F')
+# print('newboard4')
+# game.display_board()
+# # print(whitemarble)
