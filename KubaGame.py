@@ -129,7 +129,10 @@ class KubaGame:
         method to determine if there is a winner or not when called.
         :return: Player name or None
         """
-        return self.winner.get_player_name()
+        if self.winner is None:
+            return None
+        else:
+            return self.winner.get_player_name()
 
     def get_captured(self, playername):
         """
@@ -431,6 +434,9 @@ class Player:
         return self.color
 
     def update_captured(self):
+        """
+        updates the captured count for a player
+        """
         self.captured = 1
 
 
