@@ -91,11 +91,11 @@ class KubaGame:
             if direction == 'L':
                 pass
             elif direction == 'R':
-                self.move_right(coordinate)
+                return self.move_right(coordinate)
             elif direction == 'F':
-                self.move_forward(coordinate)
+                return self.move_forward(coordinate)
             elif direction == 'B':
-                self.move_backward(coordinate)
+                return self.move_backward(coordinate)
 
             if playername == self.p1.get_player_name():
                 self.set_current_player(self.p2)
@@ -180,19 +180,11 @@ class KubaGame:
         for list in self.board:
             column_squares.append(list[column])
 
-        print(column_squares)
-        print(coordinate)
-        if 'X' in column_squares is False:
-            print('x is in squares')
-
         if row == 0 and 'X' not in column_squares:
-            print('scenario1')
             temp = column_squares.pop()
             column_squares.insert(0, 'X')
 
         elif (row != 6 and column_squares[row-1] == 'X') or (row == 0 and 'X' in column_squares):
-            print('scenario2')
-            print(column_squares)
             location = row
             if 'X' in column_squares[row:]:
                 for item in column_squares[row:]:
@@ -203,12 +195,10 @@ class KubaGame:
                     location += 1
             else:
                 column_squares.insert(row, 'X')
-                print(column_squares)
                 temp = column_squares.pop()
 
 
-        elif coordinate[0] != 6 and column_squares[coordinate[0]-1] != 'X':
-            print('scenario3')
+        elif row != 6 and column_squares[row-1] != 'X':
             return False
 
         tracker = 0
@@ -221,6 +211,8 @@ class KubaGame:
             self.change_current_player()
         else:
             self.change_current_player()
+
+        return True
 
 
 
@@ -284,34 +276,42 @@ class KubaGame:
         :return: Boolean value for validity of move
         """
         column = coordinate[1]
+        row = 6-coordinate[0]
         column_squares = []
-        for row in self.board:
-            column_squares.append(row[column])
+        temp = None
+        for list in self.board:
+            column_squares.append(list[column])
 
         column_squares.reverse()
 
-        if coordinate[0] == 6 and 'X' in column_squares is False:
-            temp = column_squares.pop(6)
+        print(column_squares)
+        print(coordinate)
+        if row == 0 and 'X' not in column_squares:
+            print('scenario1')
+            temp = column_squares.pop()
             column_squares.insert(0, 'X')
 
-        elif (coordinate[0] != 6 and column_squares[coordinate[0] + 1] != 'X' or 'R') or (
-                coordinate[0] == 6 and 'X' in column_squares is True):
-            print(column_squares)
-            row = 6-coordinate[0]
+        elif (row != 6 and column_squares[row - 1] == 'X') or (row == 0 and 'X' in column_squares):
+            print('scenario2')
             location = row
-            for item in column_squares[row:]:
-                if item == 'X':
-                    temp = column_squares.pop(location)
-                    column_squares.insert(row, 'X')
-                    break
-                location += 1
-            print(column_squares)
+            if 'X' in column_squares[row:]:
+                for item in column_squares[row:]:
+                    if item == 'X':
+                        column_squares.pop(location)
+                        column_squares.insert(row, 'X')
+                        break
+                    location += 1
+            else:
+                column_squares.insert(row, 'X')
+                print(column_squares)
+                temp = column_squares.pop()
 
-        elif coordinate[0] != 0 and column_squares[coordinate[0] + 1] != 'X' or 'R':
+        elif row != 6 and column_squares[row - 1] != 'X':
+            print('scenario3')
             return False
 
-
         column_squares.reverse()
+
         tracker = 0
         for square in column_squares:
             self.board[tracker][column] = square
@@ -319,15 +319,9 @@ class KubaGame:
 
         if temp == 'R':
             self.get_current_player().update_captured()
-            if self.get_current_player() == self.p1:
-                self.set_current_player(self.p2)
-            else:
-                self.set_current_player(self.p1)
+            self.change_current_player()
         else:
-            if self.get_current_player() == self.p1:
-                self.set_current_player(self.p2)
-            else:
-                self.set_current_player(self.p1)
+            self.change_current_player()
 
         return True
 
@@ -371,64 +365,36 @@ game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
 game.create_board()
 print('current player is', end=': ')
 print(game.current_player)
+game.make_move('PlayerA', (0,0), 'B')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerB', (6,1), 'F')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerA', (1,0), 'B')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerB', (5,1), 'F')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerA', (2,0), 'B')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerB', (4,1), 'F')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+print(game.p2.captured)
 game.make_move('PlayerA', (0,1), 'B')
 game.display_board()
 print('current player is', end=': ')
 print(game.current_player.get_player_name())
-game.make_move('PlayerB', (0,6), 'B')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-game.make_move('PlayerA', (1,1), 'B')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-game.make_move('PlayerB', (1,6), 'B')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-game.make_move('PlayerA', (2,1), 'B')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-print(game.get_captured('PlayerA'))
-game.make_move('PlayerB', (2,6), 'B')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-game.make_move('PlayerA', (3,1), 'B')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-print(game.get_captured('PlayerA'))
-game.make_move('PlayerB', (3,6), 'B')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-game.make_move('PlayerA', (4,1), 'B')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-print(game.get_captured('PlayerA'))
 
 
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# game.make_move('PlayerA', (1,1), 'B')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# game.make_move('PlayerA', (0,1), 'B')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# game.make_move('PlayerB', (1,5), 'B')
-# print('newboard3')
-# game.display_board()
-# print('current player is', end=': ')
-# print(game.current_player.get_player_name())
-# game.make_move('PlayerA', (6,1), 'F')
-# print('newboard4')
-# game.display_board()
-# # print(whitemarble)
+
+
