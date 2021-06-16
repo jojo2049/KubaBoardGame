@@ -21,6 +21,10 @@ class KubaGame:
         self.board = self.create_board()
         self.current_player = None
         self.winner = None
+        self.previous_column = {}
+        self.previous_row = {}
+        self.new_column = {}
+        self.new_row = {}
 
     def create_board(self):
         """
@@ -195,9 +199,10 @@ class KubaGame:
         column_squares = []
         temp = None
 
-        #creates a list from the column to work with
+        #creates a list from the column to work with, stores original column for ko rule
         for list in self.board:
             column_squares.append(list[column])
+        self.previous_column.update({self.current_player: column_squares})
 
         #scenario for moving an edge square with no blanks in the column
         if row == 0 and 'X' not in column_squares:
@@ -220,6 +225,17 @@ class KubaGame:
 
         #scenario if the square to move does not have a blank square behind  it
         elif row != 6 and column_squares[row-1] != 'X':
+            return False
+
+        #checks for ko rule
+        self.new_column.update({self.current_player: column_squares})
+        if self.current_player is not None:
+            current = self.current_player
+        if self.current_player == self.p1:
+            other = self.p2
+        else:
+            other = self.p1
+        if self.new_column.get(current) == self.previous_column.get(other):
             return False
 
         #updates board column with working column values
@@ -251,6 +267,9 @@ class KubaGame:
         working_row = self.board[row]
         temp = None
 
+        #ko rule comparison save
+        self.previous_row.update({self.current_player: working_row})
+
         #reverses a row to work with
         working_row.reverse()
 
@@ -279,6 +298,19 @@ class KubaGame:
 
         #reverses final row again for insertion back into game board
         working_row.reverse()
+
+        #ko rule check
+        self.new_row.update({self.current_player: working_row})
+        if self.current_player is not None:
+            current = self.current_player
+        if self.current_player == self.p1:
+            other = self.p2
+        else:
+            other = self.p1
+        if self.new_row.get(current) == self.previous_row.get(other):
+            return False
+
+        #updates board to new row
         self.board[row] = working_row
 
         # updates captured based on mable that fell off. Declares winner if 7 R is reached. Changes player afterwards.
@@ -303,6 +335,9 @@ class KubaGame:
         working_row = self.board[row]
         temp = None
 
+        # ko rule comparison save
+        self.previous_row.update({self.current_player: working_row})
+
         # scenario for moving an edge square with no blanks in the column
         if column == 0 and 'X' not in working_row:
             temp = working_row.pop()
@@ -324,6 +359,17 @@ class KubaGame:
 
         # scenario if the square to move does not have a blank square behind  it
         elif column != 6 and working_row[column - 1] != 'X':
+            return False
+
+        # ko rule check
+        self.new_row.update({self.current_player: working_row})
+        if self.current_player is not None:
+            current = self.current_player
+        if self.current_player == self.p1:
+            other = self.p2
+        else:
+            other = self.p1
+        if self.new_row.get(current) == self.previous_row.get(other):
             return False
 
         #inserts working row into game board
@@ -354,6 +400,7 @@ class KubaGame:
         # creates a list from the column to work with
         for list in self.board:
             column_squares.append(list[column])
+        self.previous_column.update({self.current_player: column_squares})
 
         #reverses column to work with
         column_squares.reverse()
@@ -383,6 +430,17 @@ class KubaGame:
 
         #reverses row back to original order
         column_squares.reverse()
+
+        # checks for ko rule
+        self.new_column.update({self.current_player: column_squares})
+        if self.current_player is not None:
+            current = self.current_player
+        if self.current_player == self.p1:
+            other = self.p2
+        else:
+            other = self.p1
+        if self.new_column.get(current) == self.previous_column.get(other):
+            return False
 
         # updates board column with working column values
         tracker = 0
@@ -439,7 +497,33 @@ class Player:
         """
         self.captured = 1
 
-
-
+game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player)
+print(game.new_row)
+print(game.previous_row)
+game.make_move('PlayerA', (0, 0), 'R')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+print(game.new_row)
+print(game.previous_row)
+game.make_move('PlayerB', (0, 6), 'L')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerA', (0, 1), 'R')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerB', (0, 5), 'L')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
+game.make_move('PlayerA', (2, 0), 'B')
+game.display_board()
+print('current player is', end=': ')
+print(game.current_player.get_player_name())
 
 
