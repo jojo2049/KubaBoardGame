@@ -7,7 +7,7 @@ class KubaGame:
     """
     This class is our overall game class.
     Contains all methods for initializing the game and various moves/options a player has.
-    Takes as its parameters two tuples and will work the GameBoard, Player, and Marble objects.
+    Takes as its parameters two tuples for player name and color.
     """
 
     def __init__(self, p1: tuple, p2: tuple):
@@ -497,33 +497,35 @@ class Player:
         """
         self.captured = 1
 
-game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player)
-print(game.new_row)
-print(game.previous_row)
-game.make_move('PlayerA', (0, 0), 'R')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-print(game.new_row)
-print(game.previous_row)
-game.make_move('PlayerB', (0, 6), 'L')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-game.make_move('PlayerA', (0, 1), 'R')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-game.make_move('PlayerB', (0, 5), 'L')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
-game.make_move('PlayerA', (2, 0), 'B')
-game.display_board()
-print('current player is', end=': ')
-print(game.current_player.get_player_name())
+
+# Sample test moves below
+# game = KubaGame(('PlayerA', 'W'), ('PlayerB', 'B'))
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player)
+# print(game.new_row)
+# print(game.previous_row)
+# game.make_move('PlayerA', (0, 0), 'R')
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player.get_player_name())
+# print(game.new_row)
+# print(game.previous_row)
+# game.make_move('PlayerB', (0, 6), 'L')
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player.get_player_name())
+# game.make_move('PlayerA', (0, 1), 'R')
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player.get_player_name())
+# game.make_move('PlayerB', (0, 5), 'L')
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player.get_player_name())
+# game.make_move('PlayerA', (2, 0), 'B')
+# game.display_board()
+# print('current player is', end=': ')
+# print(game.current_player.get_player_name())
 
 
